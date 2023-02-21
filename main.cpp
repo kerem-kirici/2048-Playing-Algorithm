@@ -6,19 +6,19 @@
 
 /*
 
-    Firstly thanks for viewing my code. I hope i could've explained the code clear enough and it all makes sense for you.
+    Firstly thanks for viewing my code. I hope I could've explained the code clearly enough and it all makes sense for you.
 
     The comments in this file will only explain steps of the algorithm and usage of methods. 
     In order to understand the base algorithm, read the explanation from the github page of this code.
 
-    Github user name: kerem-kirici
+    Github username: kerem-kirici
     for any advice to improve the algorithm please email me: kerem.kirici36@gmail.com
     
     ITU <3
 */
 
 
-// Number of blocks on a side of square board of the game.
+// Number of blocks on a side of the square board of the game.
 const int SIZE = 4;
 
 // A constant which will be used as highest number (infinity) for doubles
@@ -30,8 +30,8 @@ class Player;
 
 /*
 
-        There are some same funcitons in these classes. 
-        The explanation of that functions will only appear in Game class.
+        There are some similar functions in these classes. 
+        The explanation of those functions will only appear in Game class.
 
 */
 
@@ -42,29 +42,29 @@ private:
 
     // main board of the game
     int board[SIZE][SIZE];
-    // secondary board of the game. this board will only be used as a copy for main board in order to paste it later in some situations.
+    // secondary board of the game. This board will only be used as a copy for the main board in order to paste it later in some situations.
     int con_board[SIZE][SIZE];
     // main board of the game
     int score = 0;
-    // secondary board of the game. this board will only be used as a copy for main board in order to paste it later in some situations.
+    // secondary board of the game. This board will only be used as a copy for the main board in order to paste it later in some situations.
     int con_score = 0;
 
     // a boolean which indicates if the game will end if the player reaches target number (which is usually 2048)
     bool target_number_active;
-    // a boolean indicating whether console is showing the current state of game during playtime or not.
+    // a boolean indicating whether the console is showing the current state of the game during playtime or not.
     bool log_data;
 
 
-    // the following sliding functions has one base method. 
+    // the following sliding functions have one base method. 
     //  * (1) first for each column/row start checking the blocks from the ending side of the swipe.
     //  * (2) if the block contains a non 0 value, then:
     //      * (3) start checking from that block to the starting side of the swipe with another loop 
-    //      * (4) check if there is same valued block in the column until there is a non empty block with another value, in that case break the loop.
+    //      * (4) check if there is the same valued block in the column until there is a non-empty block with another value, in that case break the loop.
     //      * (5) if there is a same value block then delete that block's value and multiply the starting block with 2, then break the loop.
     //  * (6) lastly slide all the non empty blocks in the direction of swipe to fill empty blocks with valued blocks (to have no gaps between valued blocks).
 
     bool slide_up(){
-        // pasting main board to secondary board in order to check if it has changed at the end of this function. 
+        // pasting the main board to the secondary board in order to check if it has changed at the end of this function. 
         paste_board_to(&con_board[0][0], &con_score);
 
         // starting a loop for columns
@@ -101,7 +101,7 @@ private:
                 }   
         }
 
-        // check if board has changed. return true if it has changed otherwise return false.
+        // check if the board has changed. return true if it has changed otherwise return false.
         return !boards_same();
     }
 
@@ -227,7 +227,7 @@ private:
         // copying board in order to check later if it has changed.
         paste_board_to(&con_board[0][0], &con_score);
 
-        // if target number has activated then check if it has been reached.
+        // if the target number has been activated then check if it has been reached.
         if (target_number_active){
             for (int i = 0; i < SIZE; i++)
                 for (int j = 0; j < SIZE; j++)
@@ -256,16 +256,16 @@ private:
             return false;
         }
 
-        // if target score is not reached and no possible move can change the board, then the game is finished.
+        // if the target score is not reached and no possible move can change the board, then the game is finished.
         return true;
     }
 
-    // this method finds all empty blocks and randomly selects one. then with chance of 90% fills that block with 2 otherwise with 4.
+    // this method finds all empty blocks and randomly selects one. then with a chance of 90% fills that block with 2 otherwise with 4.
     void seed_board(){
         // get a floating number between 0 and 1.
         float possible4 = (float) rand() / RAND_MAX;
 
-        // storing vector for all empty positions in the board.
+        // vector storing all empty positions in the board.
         std::vector<std::array<int, 2>> positions;
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
@@ -276,12 +276,12 @@ private:
 
         std::array<int, 2> position= positions[position_index];
 
-        // filling empty block with 2 (90%) or 4 (10%), deciding the probibilty with the random floating number being lower or higher than 0.1.
+        // filling the empty block with 2 (90%) or 4 (10%), deciding the probability with the random floating number being lower or higher than 0.1.
         board[position[0]][position[1]] = ( possible4 > 0.1 ) ? 2 : 4;
 
     }
 
-    // checks if the main board and secondary board are same.
+    // checks if the main board and secondary board are the same.
     bool boards_same(){
         //gets starting value's pointer of the boards and compares 1 by 1 through the board by increasing pointer method
         int *ptr1 = &board[0][0];
@@ -292,7 +292,7 @@ private:
         return true;
     }
 
-    // in case of user played game, this method receives user input and returns it as char data.
+    // in case of a user played game, this method receives user input and returns it as char data.
     char user_input(){
         char move;
         std::cout << "Move (u d r l q): ";
@@ -337,7 +337,7 @@ private:
 
 public:
 
-    // a shared board and score which is a copy of main board/score but by using this shared board, it is impossible for player to affect main board.
+    // a shared board and score which is a copy of the main board/score but by using this shared board, it is impossible for the player to affect the main board.
     int shared_board[SIZE][SIZE];
     int shared_score = 0;
 
@@ -347,7 +347,7 @@ public:
     // while printing the board, just to prettify things, using this maximum padding length for numbers.
     const int PADDING_LENGTH = log10(FINISHING_NUMBER)+2;
 
-    // constructer which will receive 2 bools: target number activated and logging playing data such as current board, best move, chance of death...
+    // constructor which will receive 2 booleans: target number activated and logging playing data such as current board, best move, chance of death...
     Game(bool target_number_actv=true, bool log_playing_data=true) {
         // seed random source for full randomness.
         srand(rand()+time(0));
@@ -363,11 +363,11 @@ public:
         seed_board();
         seed_board();
 
-        // pasting original board to shared one.
+        // pasting the original board to the shared one.
         paste_board_to(&shared_board[0][0], &shared_score);
     }
     
-    // function for displaying board and score pretty.
+    // function for displaying the board and score pretty.
     void display_board(){
         std::cout << std::endl << "Score: " << score << std::endl;
 
@@ -381,7 +381,7 @@ public:
         }
     }
 
-    // main play function which intitates every other step.
+    // main play function which initiates every other step.
     // receives 2 optional parameters, if there is no parameter passed, then it means the user will play.
     // otherwise if a pointer to a Player class object and a pointer to a get_move function of Player class passed, then Player class bot should play the game.
     void play(Player *player_ptr = nullptr, char (Player::*get_move)(bool) = nullptr){
@@ -410,7 +410,7 @@ public:
 
 };
 
-// This class has methods to play the game in most proper way according to the algorithm.
+// This class has methods to play the game in the most proper way according to the algorithm.
 class Player {
 private:
     // main calculation board
@@ -587,7 +587,7 @@ private:
         parent_score = *score_ptr;
     }
 
-    // check for explanations in Game class finished function. (only difference: this has no target value check)
+    // check for explanations in the Game class finished function. (only difference: this has no target value check)
     bool finished(){
         paste_board_to(&con_board[0][0], &con_score);
 
@@ -637,11 +637,11 @@ private:
 
 
     // this function, one of the two key functions of deep calculation, does 2 main things: 
-    //  * (1) Checks if the current depth of the calculation reached to maximum depth.
-    //  * (2) If it has reached, then function calculates current point of gain and adds it up to the parent decide level's point of gain.
-    //  * (3) If it hasn't reached yet, it fills every empty block one by one with twos and fours then initiates next level of computing (search_move). By
+    //  * (1) Checks if the current depth of the calculation has reached maximum depth.
+    //  * (2) If it has reached, then the function calculates the current point of gain and adds it up to the parent decider level's point of gain.
+    //  * (3) If it hasn't reached yet, it fills every empty block one by one with twos and fours then initiates the next level of computing (search_move). By
     //        this way further steps are calculated until depth reaches maximum depth and (2) happens.
-    //  * (4) While filling empty blocks with start values, the function updates the this position's chance of occur for further levels.
+    //  * (4) While filling empty blocks with start values, the function updates this position's chance of occurrence for further levels.
 
     void search_fill(double *parent_point_of_gain, double *parent_chance_of_death, int parent_empty_cells,
                      int parent_score, int depth=0, double chance_of_occur=1){
@@ -663,8 +663,8 @@ private:
                 if (board[i][j] == 0){      // (3)
                     board[i][j] = 2;
 
-                    // further steps of calculation starts with last step's chance of death and point of gain as parent values and updated chance of occur.
-                    // chance of occur is updated with multipilyer of 0.9 or 0.1 (filling with either 2 or 4)  
+                    // further steps of calculation start with the last step's chance of death and point of gain as parent values and updated chance of occurrence.
+                    // chance of occur is updated with multiplier of 0.9 or 0.1 (filling with either 2 or 4)  
                     //                                 and chance of that block has been picked which is 1/(number of empty cells)
 
                     search_move(parent_point_of_gain, parent_chance_of_death, parent_empty_cells-1, parent_score, depth,
@@ -682,12 +682,12 @@ private:
     
     // this function, one of the two key functions of deep calculation, does 2 main things: 
     //  * (1) Checks if the current board is finished.
-    //  * (2) If it has finished, then it updates the parent chance of death by adding the chance of this position's occur.
+    //  * (2) If it has finished, then it updates the parent chance of death by adding the chance of this position's occurrence.
     //  * (3) If it hasn't finished, first copy the current position of board, then for every each of 4 swipe option do:
     //      * (5) If it is possible to slide, slide
     //      * (6) Initiate next level of computing by search_fill method end updates this levels chance of death and point of gain
     //      * (7) Update the current minimum chance of death if this slide's chance of death is less.
-    //      * (8) In case of these chance of deaths being same, update the current maximum point of gain if this slide's point is higher.
+    //      * (8) In case of these chances of deaths being equal, update the current maximum point of gain if this slide's point is higher.
     //      * (9) Lastly reset all chance of death and point of gain data for other slide options and reset the board to the position in this method's start
     //  * (4) At the end as the minimum possible chance of death and maximum point of gain which can be decided,
     //        add current values of this chance and point to the parent values
@@ -804,12 +804,12 @@ private:
 public:
     const int PADDING_LENGTH = log10(Game::FINISHING_NUMBER)+1;
 
-    // constructer method which declares game object to the game pointer data of class.
+    // constructor method which declares a game object to the game pointer data of class.
     Player(Game *game_ptr){
         game = game_ptr;
     }
     
-    // function that starts whole finding best move process and returns the best possible move.
+    // function that starts the whole finding best move process and returns the best possible move.
     char best_move(bool log_data){
         //firstly get the current situation from the Game class shared board to the parent board and then the main board
         copy_parent_board_from(&(*game).shared_board[0][0], &(*game).shared_score);
@@ -826,12 +826,12 @@ public:
         int cur_empty_cells = empty_cells_num();
         int cur_score = score;
 
-        // folowing sliding actions all have same base method which is: 
+        // following sliding actions all have same base method which is: 
         //  * (1) if it is possible to slide, slide
         //  * (2) start computing next levels of calculation by starting serach_fill method which will end with 
         //        updated values of this level's chance of death and point of gain.
         //  * (3) in case of chance_of_death being the lowest ever seen during this searching best move process update it and point of gain.
-        //  * (4) if it is eaqual to the lowest ever seen chance of death then if this move has more point of gain update it with higher one.
+        //  * (4) if it is equal to the lowest ever seen chance of death then if this move has more points of gain, update it with the higher one.
         //  * (5) lastly reset all chance of death and point of gain data for other slide options and reset the board to the parent board.
 
         if (slide_up()){    // (1)
@@ -946,16 +946,18 @@ int main() {
     
     std::cout << "Welcome to my app. I'm Kerem Kırıcı and I'm studying electronics and communication engineering at ITU." << std::endl <<
                 "I have a few years of coding experience and just started to learn C++ and this is my first project in C++." << std::endl <<
-                "You can either play 2048 game by yourself (which is not the exiting part :D ) or" << std::endl <<
-                "you can watch my algorithm, which is explained in both the github page and in the file, play it in front of you." << std::endl << std::endl;
+                "You can either play 2048 game by yourself (which is not the exciting part :D ) or" << std::endl <<
+                "you can watch my algorithm, which is explained in both the github page and in the file, play it in front of you." << std::endl;
                 
     
     char input;
 
     do{
-        std::cout << "1- To play the game please enter [1]" << std::endl <<
+        std::cout << std::endl <<
+                     "1- To play the game please enter [1]" << std::endl <<
                      "2- To watch my algorithm play it please enter [2]" << std::endl << 
                      "q- To Quit the app please enter [q]" << std::endl;
+
         std::cout << std::endl << "Input: ";
         std::cin >> input;
         switch (input)
@@ -983,3 +985,5 @@ int main() {
 
     return 0;
 }
+
+
