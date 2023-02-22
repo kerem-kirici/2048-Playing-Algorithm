@@ -6,6 +6,8 @@ First of all some results of this program:
   1) 3 of those games ended with '4096' number achieved and scores were about 55000.
   2) 16 of those games ended with '2048' number achieved and scores were about 31000.
   3) 13 of those games ended with '1024' number achieved and scores were about 15500.
+  4) Maximum score was 58248 and minimum score was 12148.
+  5) All scores have an arithmetic mean of about 27200 and standard deviation was about 12000.
   
 * Which means about 50% of the time algorithm achieves the number '2048', about 40% of the time it achieves the number '1024' and 10% of the time '4096' number will be achieved.
 
