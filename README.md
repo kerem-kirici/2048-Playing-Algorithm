@@ -1,6 +1,16 @@
 # 2048 Playing Algorithm and Application
 This C++ file contains a console app for 2048 Game which can be played by either a person or an algorithm. 
 
+First of all some results of this program: 
+* I've simulated 32 games played with this algorithm
+  1) 3 of those games ended with '4096' number achieved and scores were about 55000.
+  2) 16 of those games ended with '2048' number achieved and scores were about 31000.
+  3) 13 of those games ended with '1024' number achieved and scores were about 15500.
+  
+* Which means about 50% of the time algorithm achieves the number '2048', about 40% of the time it achieves the number '1024' and 10% of the time '4096' number will be achieved.
+
+* The only problem in this code is that it uses a huge amount of RAM and that should be corrected.
+
 
 Algorithm works like this:
 
