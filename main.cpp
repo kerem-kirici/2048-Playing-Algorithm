@@ -2,7 +2,6 @@
 #include <array>
 #include <vector>
 #include <math.h>
-//#include <fstream>
 
 
 /*
@@ -965,37 +964,8 @@ void auto_play(bool target_number_activated=false, bool data_log=true){
 
 }
 
-//const int N_GAMES = 100;
-//int m[5][N_GAMES];
 
-int main() {
-    /*
-    for (int played = 1; played <= N_GAMES; played++){
-        Game game(false, false);
-        Player player(&game, false, false);
-        player.start();
-
-        int highest = 0;
-        for (int i = 0; i < SIZE; i++)
-            for (int j = 0; j < SIZE; j++)
-                if (game.shared_board[i][j] > highest)
-                    highest = game.shared_board[i][j];
-        m[(int)log2(highest/512)][played-1] = game.shared_score;
-        std::cout << "Game #" << played << ":  " << highest << "  -  " << game.shared_score << std::endl;
-
-    }
-    std::ofstream data_file("data_log.txt");
-
-    for (int i = 0; i < 5; i++){
-        data_file << 512*pow(2, i) << " -  ";
-        for (int j = 0; j < N_GAMES; j++)
-            if (m[i][j] > 0) data_file << m[i][j] << "  ";
-        data_file << '\n';
-    }
-
-    data_file.close();
-    */
-    
+int main() {   
     std::cout << "Welcome to my app. I'm Kerem and I'm studying electronics and communication engineering at ITU." << std::endl <<
                 "I have a few years of coding experience and just started to learn C++ and this is my first project in C++." << std::endl <<
                 "You can either play 2048 game by yourself (which is not the exciting part :D ) or" << std::endl <<
