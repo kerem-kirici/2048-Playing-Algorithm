@@ -720,6 +720,9 @@ private:
                         
             // (2_2)
             // logarithm of difference in scores in base 2 is another multiplier of gain point.
+            // the basic idea of multiplying with occurence chance is because as the layers computed goes higher 
+            //   the potential score increasement is getting higher too however the chance of occurence is getting smaller. 
+            //   In order to even that out we are multiplying with occurence chance. 
             *parent_point_of_gain += cell_chng_point*log2(score-parent_score+1)*log2(adjacent_point+1)*chance_of_occur;
             return;
         }
