@@ -24,17 +24,12 @@ const int SIZE = 4;
 // A constant which will be used as highest number (infinity) for doubles
 const double DOUBLE_MAX = std::numeric_limits<double>::max();
 
-// classes will be used
-class Game;
-class Player;
-
 /*
 
-        There are some similar functions in these classes. 
+        There are some similar functions in flowwing classes. 
         The explanation of those functions will only appear in Game class.
 
 */
-
 
 // This class has methods to run the game properly which can be played either by a user(via console inputs) or a Player class bot.
 class Game {
@@ -50,9 +45,9 @@ private:
     int con_score = 0;
 
     // a boolean which indicates if the game will end if the player reaches target number (which is usually 2048)
-    bool target_number_active;
+    bool target_number_activated;
     // a boolean indicating whether the console is showing the current state of the game during playtime or not.
-    bool log_data;
+    bool data_log;
 
 
     // the following sliding functions have one base method. 
@@ -228,7 +223,7 @@ private:
         paste_board_to(&con_board[0][0], &con_score);
 
         // if the target number has been activated then check if it has been reached.
-        if (target_number_active){
+        if (target_number_activated){
             for (int i = 0; i < SIZE; i++)
                 for (int j = 0; j < SIZE; j++)
                     if (board[i][j] == Game::FINISHING_NUMBER) return true;
@@ -301,9 +296,56 @@ private:
         return move;
     }
 
-    // this method receives a move as a parameter and plays that move.
+
+public:
+
+    // a shared board and score which is a copy of the main board/score but by using this shared board, it is impossible for the player to affect the main board.
+    int shared_board[SIZE][SIZE];
+    int shared_score = 0;
+
+    // Target Number
+    static const int FINISHING_NUMBER = 2048;
+
+    // while printing the board, just to prettify things, using this maximum padding length for numbers.
+    const int PADDING_LENGTH = log10(FINISHING_NUMBER)+2;
+
+    // constructor which will receive 2 booleans: target number activated and logging playing data such as current board, best move, chance of death...
+    Game(bool target_number_activated=true, bool data_log=true) {
+        // seed random source for full randomness.
+        srand(rand()+time(0));
+        this->target_number_activated = target_number_activated;
+        this->data_log = data_log;
+
+        // creating total empty board
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
+                board[i][j] = 0;
+
+        // seeding board twice to start the game.
+        seed_board();
+        seed_board();
+
+        // pasting the original board to the shared one.
+        paste_board_to(&shared_board[0][0], &shared_score);
+    }
+
+    // function for displaying the board and score pretty in console.
+    void display_board(){
+        std::cout << std::endl << "Score: " << score << std::endl;
+
+        for (int i = 0; i < SIZE; i++){
+            for (int j = 0; j < SIZE; j++){
+                std::cout << board[i][j];
+                for (int k = 0; k < PADDING_LENGTH-(int)log10(board[i][j]+1); k++) 
+                    std::cout << " "; 
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    // this method receives a move as a parameter and plays that move. Basic structure of gameplay.
     void step(char move){
-        
+
         switch (move)
         {
         case 'u':
@@ -328,84 +370,30 @@ private:
         
         default:
             // in case of invalid input
-            display_board();
+            if (data_log) display_board();
             std::cout << "Invalid Input" << std::endl;
         }
-
-    }
-
-
-public:
-
-    // a shared board and score which is a copy of the main board/score but by using this shared board, it is impossible for the player to affect the main board.
-    int shared_board[SIZE][SIZE];
-    int shared_score = 0;
-
-    // Target Number
-    static const int FINISHING_NUMBER = 2048;
-
-    // while printing the board, just to prettify things, using this maximum padding length for numbers.
-    const int PADDING_LENGTH = log10(FINISHING_NUMBER)+2;
-
-    // constructor which will receive 2 booleans: target number activated and logging playing data such as current board, best move, chance of death...
-    Game(bool target_number_actv=true, bool log_playing_data=true) {
-        // seed random source for full randomness.
-        srand(rand()+time(0));
-        target_number_active = target_number_actv;
-        log_data = log_playing_data;
-
-        // creating total empty board
-        for (int i = 0; i < SIZE; i++)
-            for (int j = 0; j < SIZE; j++)
-                board[i][j] = 0;
-
-        // seeding board twice to start the game.
-        seed_board();
-        seed_board();
-
-        // pasting the original board to the shared one.
+        
         paste_board_to(&shared_board[0][0], &shared_score);
     }
-    
-    // function for displaying the board and score pretty.
-    void display_board(){
-        std::cout << std::endl << "Score: " << score << std::endl;
 
-        for (int i = 0; i < SIZE; i++){
-            for (int j = 0; j < SIZE; j++){
-                std::cout << board[i][j];
-                for (int k = 0; k < PADDING_LENGTH-(int)log10(board[i][j]+1); k++) 
-                    std::cout << " "; 
-            }
-            std::cout << std::endl;
-        }
-    }
-
-    // main play function which initiates every other step.
-    // receives 2 optional parameters, if there is no parameter passed, then it means the user will play.
-    // otherwise if a pointer to a Player class object and a pointer to a get_move function of Player class passed, then Player class bot should play the game.
-    void play(Player *player_ptr = nullptr, char (Player::*get_move)(bool) = nullptr){
+    // main play function which initiates every other step for user as a player.
+    void play(){
         
         // while loop that will run until game is finished
         while (!finished()){
-            char move;
-            if (log_data) display_board();
-            paste_board_to(&shared_board[0][0], &shared_score);
+            // displaying board to user
+            if (data_log) display_board();
+    
+            char move = user_input();
+            if (move == 'q') break;
 
-            // if it is played by user:
-            if (player_ptr == nullptr){
-                move = user_input();
-                if (move == 'q') break;
-            }
-            // if it is played by bot
-            else move = (player_ptr->*get_move)(log_data);
-            
             // perform the move
             step(move);
         }
         
-        if (log_data) display_board();
-        if (log_data) std::cout << "End!" << std::endl;
+        if (data_log) display_board();
+        if (data_log) std::cout << "End!" << std::endl;
     }
 
 };
@@ -429,9 +417,11 @@ private:
     // Maximum depth of steps the calculation functions will go through.
     int COMPUTE_DEPTH = 3;
 
-    // pointer to the main game object 
-    Game *game;
+    // boolean declaring if playing data will be logged
+    bool data_log;
 
+    // pointer to the main game object 
+    Game *game_ptr;
 
     // check for explanations in Game class slide functions.
     bool slide_up(){
@@ -587,6 +577,12 @@ private:
         parent_score = *score_ptr;
     }
 
+    // a shortcut method for syncing parent board and main board to the game's shared board.
+    void sync_boards(){
+        copy_parent_board_from(&game_ptr->shared_board[0][0], &game_ptr->shared_score);
+        copy_board_from(&parent_board[0][0], &parent_score);
+    }
+    
     // check for explanations in the Game class finished function. (only difference: this has no target value check)
     bool finished(){
         paste_board_to(&con_board[0][0], &con_score);
@@ -670,7 +666,7 @@ private:
             }
     }
     
-    // this function, one of the two key functions of deep calculation, does 2 main things: 
+    // this function, one of the two key functions of deep calculation, does 3 main things: 
     //  * (1_1) Checks if the current board is finished.
     //  * (1_2) If it has finished, then it updates the parent chance of death by adding the chance of this position's occurrence.
     //  * (2_1) Checks if the current depth of the calculation has reached maximum depth.
@@ -815,28 +811,16 @@ private:
         *parent_chance_of_death += cur_chance_of_death;
         *parent_point_of_gain += cur_point_of_gain;        
     }
-
-public:
-    const int PADDING_LENGTH = log10(Game::FINISHING_NUMBER)+1;
-
-    // constructor method which declares a game object to the game pointer data of class.
-    Player(Game *game_ptr){
-        game = game_ptr;
-    }
-    
+ 
     // function that starts the whole finding best move process and returns the best possible move.
-    char best_move(bool log_data){
-        //firstly get the current situation from the Game class shared board to the parent board and then the main board
-        copy_parent_board_from(&(*game).shared_board[0][0], &(*game).shared_score);
-        copy_board_from(&parent_board[0][0], &parent_score);
-        
+    char best_move(){        
         // create decider point_of_gain and chance_of_death for lower steps/levels of calculation
         double point_of_gain = 0, chance_of_death = 0;
         double *point_of_gain_ptr = &point_of_gain, *chance_of_death_ptr = &chance_of_death;        
         // create current point_of_gain and current chance_of_death variables for tracking the lowest chance_of_death and highest point_of_gain possible
         double cur_point_of_gain = 0, cur_chance_of_death = DOUBLE_MAX;
         // best move variable that will be returned at the end of this function
-        char best_move;
+        char move;
 
         // declaring starting values of number of empty cells and score to calculate point_of_gain in the lowest level of calculation.
         int cur_empty_cells = empty_cells_num();
@@ -857,12 +841,12 @@ public:
             if (chance_of_death < cur_chance_of_death) {
                 cur_chance_of_death = chance_of_death;
                 cur_point_of_gain = point_of_gain;
-                best_move = 'u';
+                move = 'u';
             }
             // (4)
             else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
                 cur_point_of_gain = point_of_gain;
-                best_move = 'u';
+                move = 'u';
             }
             // (5)
             copy_board_from(&parent_board[0][0], &parent_score);
@@ -877,11 +861,11 @@ public:
             if (chance_of_death < cur_chance_of_death) {
                 cur_chance_of_death = chance_of_death;
                 cur_point_of_gain = point_of_gain;
-                best_move = 'd';
+                move = 'd';
             }
             else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
                 cur_point_of_gain = point_of_gain;
-                best_move = 'd';
+                move = 'd';
             }
             copy_board_from(&parent_board[0][0], &parent_score);
 
@@ -895,11 +879,11 @@ public:
             if (chance_of_death < cur_chance_of_death) {
                 cur_chance_of_death = chance_of_death;
                 cur_point_of_gain = point_of_gain;
-                best_move = 'r';
+                move = 'r';
             }
             else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
                 cur_point_of_gain = point_of_gain;
-                best_move = 'r';
+                move = 'r';
             }
             copy_board_from(&parent_board[0][0], &parent_score);
             
@@ -913,40 +897,71 @@ public:
             if (chance_of_death < cur_chance_of_death) {
                 cur_chance_of_death = chance_of_death;
                 cur_point_of_gain = point_of_gain;
-                best_move = 'l';
+                move = 'l';
             }
             else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
                 cur_point_of_gain = point_of_gain;
-                best_move = 'l';
+                move = 'l';
             }
             copy_board_from(&parent_board[0][0], &parent_score);
         }
 
         // prints out best move, chance of death and point of gain if logging data is on.
-        if (log_data) std::cout << "Best Move: " << best_move << " chance of death: " << cur_chance_of_death << " point of gain: " << cur_point_of_gain << std::endl;
+        if (data_log) std::cout << "Best Move: " << move << " chance of death: " << cur_chance_of_death << " point of gain: " << cur_point_of_gain << std::endl;
         
         // returns best move
-        return best_move;
+        return move;
     }
+
+
+public:
+    const int PADDING_LENGTH = log10(Game::FINISHING_NUMBER)+1;
+
+    // constructor method which declares a game object to the game pointer data of class.
+    Player(Game *game_ptr, bool target_number_activated=false, bool data_log=true){
+        this->game_ptr = game_ptr;
+        this->data_log = data_log;
+        sync_boards();
+    }
+
+    // function that starts whole calculations and playtime for Player class.
+    void start(){
+        // while loop that will be running until the game is finished.
+        while(!finished()){
+            //displaying board for user if data log is on.
+            if (data_log) game_ptr->display_board();
+
+            // getting best possible move from the bot.
+            char move = best_move();
+
+            // applying the move.
+            game_ptr->step(move);
+            
+            sync_boards();
+        }
+
+        if (data_log) game_ptr->display_board();
+        if (data_log) std::cout << "End!" << std::endl;
+
+    }
+    
 
 };
 
-void user_play(bool target_number_actv=true, bool log_data=true){
+void user_play(bool target_number_activated=true, bool data_log=true){
 
-    Game game(target_number_actv, log_data);
+    Game game(target_number_activated, data_log);
     game.play();
 
 }
 
-void auto_play(bool target_number_actv=false, bool log_data=true){
+void auto_play(bool target_number_activated=false, bool data_log=true){
 
-    Game game(target_number_actv, log_data);
-    Player player(&game);
-    game.play(&player, &Player::best_move);
+    Game game(target_number_activated, data_log);
+    Player player(&game, target_number_activated, data_log);
+    player.start();
 
 }
-
-
 
 
 int main() {
@@ -956,7 +971,6 @@ int main() {
                 "You can either play 2048 game by yourself (which is not the exciting part :D ) or" << std::endl <<
                 "you can watch my algorithm, which is explained in both the github page and in the file, play it in front of you." << std::endl;
                 
-    
     char input;
 
     do{
@@ -975,9 +989,6 @@ int main() {
 
         case '2':
             auto_play();
-            std::cout << std::endl << "After algorithm plays the game the app needs a refresh so this program will terminate itself. Press [Enter]";
-            std::cin.get();
-            std::cin.get();
             break;
 
         case 'q':
@@ -988,7 +999,7 @@ int main() {
             break;
         }
 
-    }while(input != 'q' && input != '2');
+    }while(input != 'q');
     
     return 0;
 }
