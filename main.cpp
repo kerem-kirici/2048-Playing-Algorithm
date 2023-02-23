@@ -427,7 +427,7 @@ private:
     int parent_score = 0;
 
     // Maximum depth of steps the calculation functions will go through.
-    int COMPUTE_DEPTH = 3;
+    int COMPUTE_DEPTH = 4;
 
     // pointer to the main game object 
     Game *game;
@@ -636,17 +636,67 @@ private:
     }
 
 
-    // this function, one of the two key functions of deep calculation, does 2 main things: 
-    //  * (1) Checks if the current depth of the calculation has reached maximum depth.
-    //  * (2) If it has reached, then the function calculates the current point of gain and adds it up to the parent decider level's point of gain.
-    //  * (3) If it hasn't reached yet, it fills every empty block one by one with twos and fours then initiates the next level of computing (search_move).
-    //        By this way further steps are calculated until depth reaches maximum depth and (2) happens.
-    //  * (4) While filling empty blocks with start values, the function updates this position's chance of occurrence for further levels.
-
+    // this function, one of the two key functions of deep calculation, does 1 thing: 
+    //  * (1) It fills every empty block one by one with twos and fours then initiates the next level of computing (search_move).
+    //        By this way further steps are calculated until depth reaches maximum depth or game finishes.
+    //  * (2) While filling empty blocks with start values, the function updates this position's chance of occurrence for further levels.
     void search_fill(double *parent_point_of_gain, double *parent_chance_of_death, int parent_empty_cells,
                      int parent_score, int depth=0, double chance_of_occur=1){
+
+        // will be used to calculate chance of occur
+        int n_empty_cells = empty_cells_num();
+
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++){
+                // if the block is empty it fills
+                if (board[i][j] == 0){      // (1)
+                    board[i][j] = 2;
+
+                    // further steps of calculation start with the last step's chance of death and point of gain as parent values and 
+                    //   updated chance of occurrence.
+                    // chance of occur is updated with multiplier of 0.9 or 0.1 (filling with either 2 or 4)  
+                    //                                 and chance of that block has been picked which is 1/(number of empty cells)
+
+                    search_move(parent_point_of_gain, parent_chance_of_death, parent_empty_cells-1, parent_score, depth,
+                                chance_of_occur*0.9*1/n_empty_cells);    // (2)
+                    
+                    board[i][j] = 4;
+                    search_move(parent_point_of_gain, parent_chance_of_death, parent_empty_cells-1, parent_score, depth,
+                                chance_of_occur*0.1*1/n_empty_cells);    // (2)
+                    
+                    // lastly clears that cell
+                    board[i][j] = 0;
+                }
+            }
+    }
+    
+    // this function, one of the two key functions of deep calculation, does 2 main things: 
+    //  * (1_1) Checks if the current board is finished.
+    //  * (1_2) If it has finished, then it updates the parent chance of death by adding the chance of this position's occurrence.
+    //  * (2_1) Checks if the current depth of the calculation has reached maximum depth.
+    //  * (2_2) If it has reached, then the function calculates the current point of gain and adds it up to the parent decider level's point of gain.
+    //  * (3) If it hasn't finished, first copy the current position of board, then for every each of 4 swipe option do:
+    //      * (5) If it is possible to slide, slide
+    //      * (6) Initiate next level of computing by search_fill method end updates this levels chance of death and point of gain
+    //      * (7) Update the current minimum chance of death if this slide's chance of death is less.
+    //      * (8) In case of these chances of deaths being equal, update the current maximum point of gain if this slide's point is higher.
+    //      * (9) Lastly reset all chance of death and point of gain data for other slide options and reset the board to the position in this method's start
+    //  * (4) At the end as the minimum possible chance of death and maximum point of gain which can be decided,
+    //        add current values of this chance and point to the parent values
+
+    void search_move(double *parent_point_of_gain, double *parent_chance_of_death, int parent_empty_cells, int parent_score,
+                     int depth, double chance_of_occur){
         
-        if (depth == COMPUTE_DEPTH){    // (1)
+        // first increase the depth of calculation. 
+        depth += 1;
+
+        // (1_1)
+        if (finished()){
+            *parent_chance_of_death += chance_of_occur; // (1_2)
+            return;
+        }
+        
+        if (depth == COMPUTE_DEPTH){    // (2_1)
             // incresement of number of empty cells motivates the code to select that option so in case of a increasement the change in number is a 
             //   multiplier of the gain point, in other cases the multplier is 1, so there is no lose of any points.
             int cell_change = empty_cells_num() - parent_empty_cells;
@@ -668,60 +718,9 @@ private:
                                 }
                             }
                         
-            // (2)
+            // (2_2)
             // logarithm of difference in scores in base 2 is another multiplier of gain point.
             *parent_point_of_gain += cell_chng_point*log2(score-parent_score+1)*log2(adjacent_point+1)*chance_of_occur;
-            return;
-        }
-
-        // will be used to calculate chance of occur
-        int n_empty_cells = empty_cells_num();
-
-        for (int i = 0; i < SIZE; i++)
-            for (int j = 0; j < SIZE; j++){
-                // if the block is empty it fills
-                if (board[i][j] == 0){      // (3)
-                    board[i][j] = 2;
-
-                    // further steps of calculation start with the last step's chance of death and point of gain as parent values and 
-                    //   updated chance of occurrence.
-                    // chance of occur is updated with multiplier of 0.9 or 0.1 (filling with either 2 or 4)  
-                    //                                 and chance of that block has been picked which is 1/(number of empty cells)
-
-                    search_move(parent_point_of_gain, parent_chance_of_death, parent_empty_cells-1, parent_score, depth,
-                                chance_of_occur*0.9*1/n_empty_cells);    // (4)
-                    
-                    board[i][j] = 4;
-                    search_move(parent_point_of_gain, parent_chance_of_death, parent_empty_cells-1, parent_score, depth,
-                                chance_of_occur*0.1*1/n_empty_cells);    // (4)
-                    
-                    // lastly clears that cell
-                    board[i][j] = 0;
-                }
-            }
-    }
-    
-    // this function, one of the two key functions of deep calculation, does 2 main things: 
-    //  * (1) Checks if the current board is finished.
-    //  * (2) If it has finished, then it updates the parent chance of death by adding the chance of this position's occurrence.
-    //  * (3) If it hasn't finished, first copy the current position of board, then for every each of 4 swipe option do:
-    //      * (5) If it is possible to slide, slide
-    //      * (6) Initiate next level of computing by search_fill method end updates this levels chance of death and point of gain
-    //      * (7) Update the current minimum chance of death if this slide's chance of death is less.
-    //      * (8) In case of these chances of deaths being equal, update the current maximum point of gain if this slide's point is higher.
-    //      * (9) Lastly reset all chance of death and point of gain data for other slide options and reset the board to the position in this method's start
-    //  * (4) At the end as the minimum possible chance of death and maximum point of gain which can be decided,
-    //        add current values of this chance and point to the parent values
-
-    void search_move(double *parent_point_of_gain, double *parent_chance_of_death, int parent_empty_cells, int parent_score,
-                     int depth, double chance_of_occur){
-        
-        // first increase the depth of calculation. 
-        depth += 1;
-
-        // (1)
-        if (finished()){
-            *parent_chance_of_death += chance_of_occur;
             return;
         }
         
