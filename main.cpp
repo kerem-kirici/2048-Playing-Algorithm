@@ -647,10 +647,30 @@ private:
                      int parent_score, int depth=0, double chance_of_occur=1){
         
         if (depth == COMPUTE_DEPTH){    // (1)
+            // incresement of number of empty cells motivates the code to select that option so in case of a increasement the change in number is a 
+            //   multiplier of the gain point, in other cases the multplier is 1, so there is no lose of any points.
             int cell_change = empty_cells_num() - parent_empty_cells;
             int cell_chng_point = ( cell_change > 0 ? cell_change : 1 );
+            
+            // adjacent point motivates the code to choose the option with similar numbers like 2048 and 1024 rather than different numbers like 2048 and 2.
+            // it sums up the 1/(ratio to the adjacent cell), unless it's a 0, and the logarithm of the result in base 2 is a multiplier of gain point.
+            double adjacent_point = 0;
+            for (int i = 0; i < SIZE; i++)
+                for (int j = 0; j < SIZE; j++)
+                    for (int k = -1; k <= 1; k++)
+                        for (int t = -1; t <= 1; t++)
+                            if ( k*t == 0 && k+t != 0 && 0 <= i+k && i+k < SIZE && 0 <= j+t && j+t < SIZE){
+                                int cell1 = board[i][j];
+                                int cell2 = board[i+k][j+t];
+                                if (cell1 != 0 && cell2 != 0){
+                                    if (cell1 < cell2) adjacent_point += (double)cell1/cell2;
+                                    else adjacent_point += (double)cell2/cell1;
+                                }
+                            }
+                        
             // (2)
-            *parent_point_of_gain += cell_chng_point*log2(score-parent_score+1)*chance_of_occur;
+            // logarithm of difference in scores in base 2 is another multiplier of gain point.
+            *parent_point_of_gain += cell_chng_point*log2(score-parent_score+1)*log2(adjacent_point+1)*chance_of_occur;
             return;
         }
 
