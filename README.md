@@ -11,8 +11,6 @@ First of all some results of this program:
   
 * Which means about 50% of the time algorithm achieves the number '2048', about 40% of the time it achieves the number '1024' and 10% of the time '4096' number will be achieved.
 
-* The only problem in this code is that it uses a huge amount of RAM in case of 3 or more layers of depth for computing. If you have any idea to fix it feel free to just email me: [kerem.kirici36@gmail.com]
-
 
 Algorithm works like this:
 
