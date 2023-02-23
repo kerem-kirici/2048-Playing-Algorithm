@@ -639,8 +639,8 @@ private:
     // this function, one of the two key functions of deep calculation, does 2 main things: 
     //  * (1) Checks if the current depth of the calculation has reached maximum depth.
     //  * (2) If it has reached, then the function calculates the current point of gain and adds it up to the parent decider level's point of gain.
-    //  * (3) If it hasn't reached yet, it fills every empty block one by one with twos and fours then initiates the next level of computing (search_move). By
-    //        this way further steps are calculated until depth reaches maximum depth and (2) happens.
+    //  * (3) If it hasn't reached yet, it fills every empty block one by one with twos and fours then initiates the next level of computing (search_move).
+    //        By this way further steps are calculated until depth reaches maximum depth and (2) happens.
     //  * (4) While filling empty blocks with start values, the function updates this position's chance of occurrence for further levels.
 
     void search_fill(double *parent_point_of_gain, double *parent_chance_of_death, int parent_empty_cells,
@@ -683,7 +683,8 @@ private:
                 if (board[i][j] == 0){      // (3)
                     board[i][j] = 2;
 
-                    // further steps of calculation start with the last step's chance of death and point of gain as parent values and updated chance of occurrence.
+                    // further steps of calculation start with the last step's chance of death and point of gain as parent values and 
+                    //   updated chance of occurrence.
                     // chance of occur is updated with multiplier of 0.9 or 0.1 (filling with either 2 or 4)  
                     //                                 and chance of that block has been picked which is 1/(number of empty cells)
 
@@ -829,7 +830,8 @@ public:
         
         // create decider point_of_gain and chance_of_death for lower steps/levels of calculation
         double point_of_gain = 0, chance_of_death = 0;
-        double *point_of_gain_ptr = &point_of_gain, *chance_of_death_ptr = &chance_of_death;        // create current point_of_gain and current chance_of_death variables for tracking the lowest chance_of_death and highest point_of_gain possible
+        double *point_of_gain_ptr = &point_of_gain, *chance_of_death_ptr = &chance_of_death;        
+        // create current point_of_gain and current chance_of_death variables for tracking the lowest chance_of_death and highest point_of_gain possible
         double cur_point_of_gain = 0, cur_chance_of_death = DOUBLE_MAX;
         // best move variable that will be returned at the end of this function
         char best_move;
