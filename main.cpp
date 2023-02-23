@@ -427,7 +427,7 @@ private:
     int parent_score = 0;
 
     // Maximum depth of steps the calculation functions will go through.
-    int COMPUTE_DEPTH = 4;
+    int COMPUTE_DEPTH = 3;
 
     // pointer to the main game object 
     Game *game;
