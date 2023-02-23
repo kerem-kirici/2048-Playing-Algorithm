@@ -430,7 +430,7 @@ private:
     int COMPUTE_DEPTH = 3;
 
     // pointer to the main game object 
-    Game *game = nullptr;
+    Game *game;
 
 
     // check for explanations in Game class slide functions.
@@ -731,91 +731,83 @@ private:
         paste_board_to(&cur_board[0][0], &cur_score);
 
         // declare this method's current and further levels' parent chance of death and point of gain values.
-        double *point_of_gain = new double{0}, *chance_of_death = new double{0};
+        double point_of_gain = 0, chance_of_death = 0;
+        double *point_of_gain_ptr = &point_of_gain, *chance_of_death_ptr = &chance_of_death;
         double cur_point_of_gain = 0, cur_chance_of_death = DOUBLE_MAX;
 
         // sliding actions have the same base idea which will be explained only in the slide_up() method.
         if (slide_up()){    // (5)
             // (6)
-            search_fill(point_of_gain, chance_of_death, parent_empty_cells, parent_score, depth, chance_of_occur);
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, parent_empty_cells, parent_score, depth, chance_of_occur);
             
             // (7)
-            if (*chance_of_death < cur_chance_of_death){
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            if (chance_of_death < cur_chance_of_death){
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
             }
             
             // (8)
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain)
-                cur_point_of_gain = *point_of_gain;
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain)
+                cur_point_of_gain = point_of_gain;
             
             // (9)
             copy_board_from(&cur_board[0][0], &cur_score);
 
-            delete chance_of_death, point_of_gain;
-
-            point_of_gain = new double{0};
-            chance_of_death = new double{0};
+            point_of_gain = 0;
+            chance_of_death = 0;
         }
         
         // to understand this part please read slide_up part of this sliding actions
         if (slide_down()){
-            search_fill(point_of_gain, chance_of_death, parent_empty_cells, parent_score, depth, chance_of_occur);
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, parent_empty_cells, parent_score, depth, chance_of_occur);
 
-            if (*chance_of_death < cur_chance_of_death){
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            if (chance_of_death < cur_chance_of_death){
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
             }
             
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain)
-                cur_point_of_gain = *point_of_gain;
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain)
+                cur_point_of_gain = point_of_gain;
 
             copy_board_from(&cur_board[0][0], &cur_score);
 
-            delete chance_of_death, point_of_gain;
-
-            point_of_gain = new double{0};
-            chance_of_death = new double{0};
+            point_of_gain = 0;
+            chance_of_death = 0;
         }
         
         // to understand this part please read slide_up part of this sliding actions
         if (slide_right()){
-            search_fill(point_of_gain, chance_of_death, parent_empty_cells, parent_score, depth, chance_of_occur);
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, parent_empty_cells, parent_score, depth, chance_of_occur);
 
-            if (*chance_of_death < cur_chance_of_death){
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            if (chance_of_death < cur_chance_of_death){
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
             }
             
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain)
-                cur_point_of_gain = *point_of_gain;            
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain)
+                cur_point_of_gain = point_of_gain;            
 
             copy_board_from(&cur_board[0][0], &cur_score);
 
-            delete chance_of_death, point_of_gain;
-
-            point_of_gain = new double{0};
-            chance_of_death = new double{0};
+            point_of_gain = 0;
+            chance_of_death = 0;
         }
         
         // to understand this part please read slide_up part of this sliding actions
         if (slide_left()){
-            search_fill(point_of_gain, chance_of_death, parent_empty_cells, parent_score, depth, chance_of_occur);
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, parent_empty_cells, parent_score, depth, chance_of_occur);
 
-            if (*chance_of_death < cur_chance_of_death){
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            if (chance_of_death < cur_chance_of_death){
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
             }
             
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain)
-                cur_point_of_gain = *point_of_gain;
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain)
+                cur_point_of_gain = point_of_gain;
 
             copy_board_from(&cur_board[0][0], &cur_score);
         }
 
-        // deleting chance_of_death and point_of_gain data from the HEAP memory.
-        delete chance_of_death, point_of_gain;
-        
         // (4)
         *parent_chance_of_death += cur_chance_of_death;
         *parent_point_of_gain += cur_point_of_gain;        
@@ -836,8 +828,8 @@ public:
         copy_board_from(&parent_board[0][0], &parent_score);
         
         // create decider point_of_gain and chance_of_death for lower steps/levels of calculation
-        double *point_of_gain = new double{0}, *chance_of_death = new double{0};
-        // create current point_of_gain and current chance_of_death variables for tracking the lowest chance_of_death and highest point_of_gain possible
+        double point_of_gain = 0, chance_of_death = 0;
+        double *point_of_gain_ptr = &point_of_gain, *chance_of_death_ptr = &chance_of_death;        // create current point_of_gain and current chance_of_death variables for tracking the lowest chance_of_death and highest point_of_gain possible
         double cur_point_of_gain = 0, cur_chance_of_death = DOUBLE_MAX;
         // best move variable that will be returned at the end of this function
         char best_move;
@@ -856,84 +848,75 @@ public:
 
         if (slide_up()){    // (1)
             // (2)
-            search_fill(point_of_gain, chance_of_death, cur_empty_cells, cur_score);
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, cur_empty_cells, cur_score);
             // (3)
-            if (*chance_of_death < cur_chance_of_death) {
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            if (chance_of_death < cur_chance_of_death) {
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
                 best_move = 'u';
             }
             // (4)
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain){
-                cur_point_of_gain = *point_of_gain;
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
+                cur_point_of_gain = point_of_gain;
                 best_move = 'u';
             }
             // (5)
             copy_board_from(&parent_board[0][0], &parent_score);
                 
-            delete chance_of_death, point_of_gain;
-
-            point_of_gain = new double{0};
-            chance_of_death = new double{0};
+            point_of_gain = 0;
+            chance_of_death = 0;
         }
 
         // to understand this part please read slide_up part of this sliding actions
         if (slide_down()){
-            search_fill(point_of_gain, chance_of_death, cur_empty_cells, cur_score);
-            if (*chance_of_death < cur_chance_of_death) {
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, cur_empty_cells, cur_score);
+            if (chance_of_death < cur_chance_of_death) {
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
                 best_move = 'd';
             }
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain){
-                cur_point_of_gain = *point_of_gain;
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
+                cur_point_of_gain = point_of_gain;
                 best_move = 'd';
             }
             copy_board_from(&parent_board[0][0], &parent_score);
 
-            delete chance_of_death, point_of_gain;
-
-            point_of_gain = new double{0};
-            chance_of_death = new double{0};
+            point_of_gain = 0;
+            chance_of_death = 0;
         }
         
         // to understand this part please read slide_up part of this sliding actions
         if (slide_right()){
-            search_fill(point_of_gain, chance_of_death, cur_empty_cells, cur_score);
-            if (*chance_of_death < cur_chance_of_death) {
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, cur_empty_cells, cur_score);
+            if (chance_of_death < cur_chance_of_death) {
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
                 best_move = 'r';
             }
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain){
-                cur_point_of_gain = *point_of_gain;
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
+                cur_point_of_gain = point_of_gain;
                 best_move = 'r';
             }
             copy_board_from(&parent_board[0][0], &parent_score);
-                
-            delete chance_of_death, point_of_gain;
-
-            point_of_gain = new double{0};
-            chance_of_death = new double{0};
+            
+            point_of_gain = 0;
+            chance_of_death = 0;
         }
 
         // to understand this part please read slide_up part of this sliding actions
         if (slide_left()){
-            search_fill(point_of_gain, chance_of_death, cur_empty_cells, cur_score);
-            if (*chance_of_death < cur_chance_of_death) {
-                cur_chance_of_death = *chance_of_death;
-                cur_point_of_gain = *point_of_gain;
+            search_fill(point_of_gain_ptr, chance_of_death_ptr, cur_empty_cells, cur_score);
+            if (chance_of_death < cur_chance_of_death) {
+                cur_chance_of_death = chance_of_death;
+                cur_point_of_gain = point_of_gain;
                 best_move = 'l';
             }
-            else if(*chance_of_death == cur_chance_of_death && *point_of_gain > cur_point_of_gain){
-                cur_point_of_gain = *point_of_gain;
+            else if(chance_of_death == cur_chance_of_death && point_of_gain > cur_point_of_gain){
+                cur_point_of_gain = point_of_gain;
                 best_move = 'l';
             }
             copy_board_from(&parent_board[0][0], &parent_score);
         }
-
-        // lastly deleting chance_of_death and point_of_gain data from the HEAP memory.
-        delete chance_of_death, point_of_gain;
 
         // prints out best move, chance of death and point of gain if logging data is on.
         if (log_data) std::cout << "Best Move: " << best_move << " chance of death: " << cur_chance_of_death << " point of gain: " << cur_point_of_gain << std::endl;
