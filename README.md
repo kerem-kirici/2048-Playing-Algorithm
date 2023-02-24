@@ -2,14 +2,16 @@
 This C++ file contains a console app for 2048 Game which can be played by either a person or an algorithm. 
 
 First of all some results of this program: 
-* I've simulated 32 games played with this algorithm
-  1) 3 of those games ended with '4096' number achieved and scores were about 55000.
-  2) 16 of those games ended with '2048' number achieved and scores were about 31000.
-  3) 13 of those games ended with '1024' number achieved and scores were about 15500.
-  4) Maximum score was 58248 and minimum score was 12148.
-  5) All scores have an arithmetic mean of about 27200 and standard deviation was about 12000.
+* I've simulated 100 games played with this algorithm
+  1) 8 of those games ended with '4096' number achieved and scores were listed between 51000 and 72000 with standard deviation of 7000.
+  2) 77 of those games ended with '2048' number achieved and scores were about 34500 with standard deviation of 3750.
+  3) 15 of those games ended with '1024' number achieved and scores were about 16250 with standard deviation of 200.
+  4) Maximum score was 71712 (4096) and minimum score was 16000 (1024).
+  5) All scores have an arithmetic mean of about 32000 and general standard deviation was about 11000.
   
-* Which means about 50% of the time algorithm achieves the number '2048', about 40% of the time it achieves the number '1024' and 10% of the time '4096' number will be achieved.
+* Which means about 75% of the time algorithm achieves the number '2048', about 15% of the time it achieves the number '1024' and 10% of the time '4096' number will be achieved.
+
+* So this code guaranties a victory of achieving '2048' 85% of the time which is pretty high.
 
 
 Algorithm works like this:
