@@ -644,8 +644,15 @@ private:
         if (depth == COMPUTE_DEPTH){    // (1)
             // incresement of number of empty cells motivates the code to select that option so in case of a increasement the change in number is a 
             //   multiplier of the gain point, in other cases the multplier is 1, so there is no lose of any points.
-            int cell_change = empty_cells_num() - parent_empty_cells;
-            int cell_chng_point = ( cell_change > 0 ? cell_change : 1 );
+            int cell_change_point = empty_cells_num() - parent_empty_cells;
+
+            // finding the maximum value on the board in order to use it as a magnet for higher valued cells to pull them to the sides of board.
+            // it will be used in adjacent point for this purpose.
+            int max_value_on_board = 0;
+            for (int i = 0; i < SIZE; i++)
+                for (int j = 0; j < SIZE; j++)
+                    if (board[i][j] > max_value_on_board)
+                        max_value_on_board = board[i][j];
             
             // adjacent point motivates the code to choose the option with similar numbers like 2048 and 1024 rather than different numbers like 2048 and 2.
             // it sums up the 1/(ratio to the adjacent cell), unless it's a 0, and the logarithm of the result in base 2 is a multiplier of gain point.
@@ -654,9 +661,12 @@ private:
                 for (int j = 0; j < SIZE; j++)
                     for (int k = -1; k <= 1; k++)
                         for (int t = -1; t <= 1; t++)
-                            if ( k*t == 0 && k+t != 0 && 0 <= i+k && i+k < SIZE && 0 <= j+t && j+t < SIZE){
+                            if (k*t == 0 && k+t != 0){
                                 int cell1 = board[i][j];
-                                int cell2 = board[i+k][j+t];
+                                int cell2;
+                                if (0 <= i+k && i+k < SIZE && 0 <= j+t && j+t < SIZE)
+                                    cell2 = board[i+k][j+t];
+                                else cell2 = max_value_on_board;
                                 if (cell1 != 0 && cell2 != 0){
                                     if (cell1 < cell2) adjacent_point += (double)cell1/cell2;
                                     else adjacent_point += (double)cell2/cell1;
@@ -668,7 +678,7 @@ private:
             // the basic idea of multiplying with occurence chance is because as the layers computed goes higher 
             //   the potential score increasement is getting higher too however the chance of occurence is getting smaller. 
             //   In order to even that out we are multiplying with occurence chance. 
-            *parent_point_of_gain += cell_chng_point*log2(score-parent_score+1)*log2(adjacent_point+1)*chance_of_occur;
+            *parent_point_of_gain += (cell_change_point + log2(score-parent_score+1) + (adjacent_point+1))*chance_of_occur;
             return;
         }
         
@@ -965,7 +975,7 @@ void auto_play(bool target_number_activated=false, bool data_log=true){
 }
 
 
-int main() {   
+int main() {
     std::cout << "Welcome to my app. I'm Kerem and I'm studying electronics and communication engineering at ITU." << std::endl <<
                 "I have a few years of coding experience and just started to learn C++ and this is my first project in C++." << std::endl <<
                 "You can either play 2048 game by yourself (which is not the exciting part :D ) or" << std::endl <<
