@@ -3,15 +3,19 @@ This C++ file contains a console app for 2048 Game which can be played by either
 
 First of all some results of this program (which calculates only 3 layers of death chance and gain point): 
 * I've simulated 100 games played with this algorithm
-  1) 8 of those games ended with '4096' number achieved and scores were listed between 51000 and 72000 with standard deviation of 7000.
-  2) 77 of those games ended with '2048' number achieved and scores were about 34500 with standard deviation of 3750.
-  3) 15 of those games ended with '1024' number achieved and scores were about 16250 with standard deviation of 200.
-  4) Maximum score was 71712 (4096) and minimum score was 16000 (1024).
-  5) All scores have an arithmetic mean of about 32000 and general standard deviation was about 11000.
+  1) 38 of those games ended with '4096' number achieved and scores were listed between 51000 and 80000 with standard deviation of 9200.
+  2) 56 of those games ended with '2048' number achieved and scores were about 34000 with standard deviation of 3400.
+  3) 6 of those games ended with '1024' number achieved and scores were about 16500 with standard deviation of 450.
+  4) Maximum score was 79864 (4096) and minimum score was 15808 (1024).
+  5) All scores have an arithmetic mean of about 43690 and general standard deviation was about 16500.
   
-* Which means about 75% of the time algorithm achieves the number '2048', about 15% of the time it achieves the number '1024' and 10% of the time '4096' number will be achieved.
+* Which means about
+    4096 -> 38%
+    2048 -> 56%
+    1024 -> 6%
+  of times these numbers will be achived.
 
-* So this code guarantees a victory of achieving '2048' 85% of the time, which is pretty high, with only 3 layers of death chance and gain point calculations. If your computer has more power than mine you can guarantee that every time code works it wins the game with more layers of calculation.
+* So this code guarantees a victory of achieving '2048' 94% of the time, which is pretty high, with only 3 layers of death chance and gain point calculations. If your computer has more power than mine you can guarantee that every time code works it wins the game with more layers of calculation.
 
 
 Algorithm works like this:
